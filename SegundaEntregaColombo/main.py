@@ -1,6 +1,6 @@
 import requests
 import pandas as pd
-from sqlalchemy import create_engine
+import psycopg2
 from dotenv import load_dotenv
 import os
 import logging
@@ -14,7 +14,7 @@ load_dotenv()
 
 REDSHIFT_USER = os.getenv('REDSHIFT_USER')
 REDSHIFT_PASSWORD = os.getenv('REDSHIFT_PASSWORD')
-REDSHIFT_HOST = os.getenv('REDSHIFT_HOST')
+REDSHIFT_ENDPOINT = os.getenv('REDSHIFT_ENDPOINT')
 REDSHIFT_PORT = os.getenv('REDSHIFT_PORT')
 REDSHIFT_DB = os.getenv('REDSHIFT_DB')
 REDSHIFT_TABLE = os.getenv('REDSHIFT_TABLE')
@@ -23,7 +23,7 @@ REDSHIFT_TABLE = os.getenv('REDSHIFT_TABLE')
 required_env_vars = {
     "REDSHIFT_USER": REDSHIFT_USER,
     "REDSHIFT_PASSWORD": REDSHIFT_PASSWORD,
-    "REDSHIFT_HOST": REDSHIFT_HOST,
+    "REDSHIFT_ENDPOINT": REDSHIFT_ENDPOINT,
     "REDSHIFT_PORT": REDSHIFT_PORT,
     "REDSHIFT_DB": REDSHIFT_DB,
     "REDSHIFT_TABLE": REDSHIFT_TABLE,
@@ -62,39 +62,50 @@ def transform_data(data):
 logging.info("Iniciando la carga de datos a Redshift")
 def load_data(df, table_name, connection_string):
     try:
-        engine = create_engine(connection_string)
+        conn = psycopg2.connect(connection_string)
+        cursor = conn.cursor()
+
+
+        create_table_query = f"""
+        CREATE TABLE IF NOT EXISTS {table_name} (
+            userId INTEGER,
+            id INTEGER PRIMARY KEY,
+            title VARCHAR,
+            body VARCHAR
+        )
+    """
+        cursor.execute(create_table_query)
+        conn.commit()
+        logging.info(f"Tabla {table_name} creada exitosamente en Redshift")
         
-        
-        create_table_query = """
-        CREATE TABLE IF NOT EXISTS posts (
-            id INT IDENTITY(1,1) PRIMARY KEY,
-            userId INT,
-            title VARCHAR(255),
-            body TEXT,
-            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
+        #Convertir Df a lista de tuplas
+        data = [tuple(row) for row in df.to_numpy()]
+       
+        insert_data_query = f"""
+        INSERT INTO {table_name} (userId, id, title, body)
+        VALUES (%s, %s, %s, %s)
         """
-        with engine.connect() as conn:
-            conn.execute(create_table_query)
-    except Exception as e:
-        logging.error(f"Error al crear tablas")
-    
-    try:
-        # Cargar los datos en la nueva tabla
-        df.to_sql(table_name, con=engine, if_exists='replace', index=False)
-        logging.info("Datos cargados exitosamente en Redshift")
+        psycopg2.extras.execute_values(cursor, insert_data_query, data)
+        conn.commit()
+        logging.info(f"Datos cargados exitosamente en la tabla {table_name} de Redshift")
+
     except Exception as e:
         logging.error(f"Error al cargar datos en Redshift: {e}")
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
 
 def main():
     api_url = 'https://jsonplaceholder.typicode.com/posts' 
     data = extract_data(api_url)
     if data:
         df = transform_data(data)
-        logging.info(df)
-        connection_string = f'postgresql+psycopg2://{REDSHIFT_USER}:{REDSHIFT_PASSWORD}@{REDSHIFT_HOST}:{REDSHIFT_PORT}/{REDSHIFT_DB}'
-        table_name = REDSHIFT_TABLE
-        load_data(df, table_name, connection_string)
+        logging.info(df) #Queda para corroborar que los datos se transformaron correctamente
+        if df is not None and not df.empty:
+            connection_string = f"dbname='{REDSHIFT_DB}' user='{REDSHIFT_USER}' password='{REDSHIFT_PASSWORD}' host='{REDSHIFT_ENDPOINT}' port='{REDSHIFT_PORT}'"
+            table_name = REDSHIFT_TABLE
+            load_data(df, table_name, connection_string)
 
 if __name__ == "__main__":
     main()
