@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import os
 import logging
-from Data_Engineer_Coderhouse.SegundaEntrega.log_config import setup_logging
+from log_config import setup_logging
 
 # Configurar el logging
 setup_logging()
@@ -63,6 +63,24 @@ logging.info("Iniciando la carga de datos a Redshift")
 def load_data(df, table_name, connection_string):
     try:
         engine = create_engine(connection_string)
+        
+        
+        create_table_query = """
+        CREATE TABLE IF NOT EXISTS posts (
+            id INT IDENTITY(1,1) PRIMARY KEY,
+            userId INT,
+            title VARCHAR(255),
+            body TEXT,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """
+        with engine.connect() as conn:
+            conn.execute(create_table_query)
+    except Exception as e:
+        logging.error(f"Error al crear tablas")
+    
+    try:
+        # Cargar los datos en la nueva tabla
         df.to_sql(table_name, con=engine, if_exists='replace', index=False)
         logging.info("Datos cargados exitosamente en Redshift")
     except Exception as e:
@@ -73,6 +91,7 @@ def main():
     data = extract_data(api_url)
     if data:
         df = transform_data(data)
+        logging.info(df)
         connection_string = f'postgresql+psycopg2://{REDSHIFT_USER}:{REDSHIFT_PASSWORD}@{REDSHIFT_HOST}:{REDSHIFT_PORT}/{REDSHIFT_DB}'
         table_name = REDSHIFT_TABLE
         load_data(df, table_name, connection_string)
