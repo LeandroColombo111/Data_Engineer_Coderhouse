@@ -15,7 +15,9 @@ WORKDIR /app
 # Copiar los archivos necesarios al contenedor
 COPY main.py ./
 COPY requirements.txt ./
+COPY log_config.py ./
 COPY .env ./
+COPY airflow ./
 
 # Instalar las dependencias de Python
 RUN pip install --no-cache-dir -r requirements.txt
