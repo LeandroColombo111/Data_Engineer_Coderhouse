@@ -1,8 +1,0 @@
-sqlalchemy<2.0
-requests
-psycopg2-binary
-sqlalchemy-redshift
-redshift_connector
-python-dotenv
-schedule
-psycopg2-binary==2.9.9

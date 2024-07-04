@@ -1,5 +1,0 @@
-#Ignore Logs
-logs/
-
-#Ignore .env
-.env
