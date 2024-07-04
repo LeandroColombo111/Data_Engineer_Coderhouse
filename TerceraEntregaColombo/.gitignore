@@ -2,8 +2,7 @@
 logs/
 
 #Ignore pycache
-__pycache/
-
+__pycache__/
 
 #Ignore .env
 .env
