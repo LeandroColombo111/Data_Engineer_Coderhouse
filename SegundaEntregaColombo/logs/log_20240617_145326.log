@@ -1,0 +1,7 @@
+2024-06-17 14:53:26,136:INFO:Logging setup complete. Logs will be stored in logs/log_20240617_145326.log
+2024-06-17 14:53:26,140:INFO:Iniciando la extracción de datos
+2024-06-17 14:53:26,140:INFO:Iniciando la transformación de datos
+2024-06-17 14:53:26,140:INFO:Iniciando la carga de datos a Redshift
+2024-06-17 14:53:26,211:INFO:Datos extraídos correctamente desde la API
+2024-06-17 14:53:26,213:INFO:Datos transformados correctamente
+2024-06-17 14:53:28,594:ERROR:Error al cargar datos en Redshift: 'Connection' object has no attribute 'cursor'

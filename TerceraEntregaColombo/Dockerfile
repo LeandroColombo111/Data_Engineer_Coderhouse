@@ -1,29 +1,32 @@
-# Usar una imagen base ligera de Python
-FROM python:3.9-slim
+# Utilizar la imagen base oficial de Apache Airflow
+FROM apache/airflow:2.1.0
 
-# Instalar dependencias del sistema necesarias
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    default-libmysqlclient-dev \
-    libpq-dev \
+# Establecer el usuario root para instalar dependencias del sistema
+USER root
+
+# Instalar dependencias del sistema
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       build-essential \
+       default-libmysqlclient-dev \
+       libpq-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Establecer el directorio de trabajo
-WORKDIR /app
+# Establecer el usuario airflow para el resto del contenedor
+USER airflow
 
-# Copiar los archivos necesarios al contenedor
-COPY main.py ./
-COPY requirements.txt ./
-COPY log_config.py ./
-COPY .env ./
-COPY airflow ./
+# Establecer el directorio de trabajo
+WORKDIR /opt/airflow
+
+# Copiar los archivos del proyecto al directorio de trabajo
+COPY . /opt/airflow
 
 # Instalar las dependencias de Python
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --user -r /opt/airflow/requirements.txt
 
-# Instalar Apache Airflow
-RUN pip install apache-airflow
+# Exponer el puerto 8080 para acceder a la interfaz web de Airflow
+EXPOSE 8080
 
-# Comando por defecto para ejecutar el script
-CMD ["python", "main.py"]
+# Establecer el comando para iniciar el servidor web de Airflow
+ENTRYPOINT ["airflow", "webserver"]

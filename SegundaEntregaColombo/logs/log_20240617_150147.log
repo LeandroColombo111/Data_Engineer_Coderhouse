@@ -1,0 +1,101 @@
+2024-06-17 15:01:47,942:INFO:Logging setup complete. Logs will be stored in logs/log_20240617_150147.log
+2024-06-17 15:01:47,945:INFO:Iniciando la extracción de datos
+2024-06-17 15:01:47,946:INFO:Iniciando la transformación de datos
+2024-06-17 15:01:47,946:INFO:Iniciando la carga de datos a Redshift
+2024-06-17 15:01:48,014:INFO:Datos extraídos correctamente desde la API
+2024-06-17 15:01:48,016:INFO:Datos transformados correctamente
+2024-06-17 15:01:48,975:ERROR:Error al cargar datos en Redshift: (psycopg2.OperationalError) connection to server at "data-engineer-cluster.cyhh5bfevlmn.us-east-1.redshift.amazonaws.com" (52.44.43.227), port 5439 failed: FATAL:  unrecognized configuration parameter "standard_conforming_strings"
+
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+Traceback (most recent call last):
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 3371, in _wrap_pool_connect
+    return fn()
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 327, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 894, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 493, in checkout
+    rec = pool._do_get()
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/impl.py", line 145, in _do_get
+    with util.safe_reraise():
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/impl.py", line 143, in _do_get
+    return self._create_connection()
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 273, in _create_connection
+    return _ConnectionRecord(self)
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 388, in __init__
+    self.__connect()
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 690, in __connect
+    with util.safe_reraise():
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 686, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/engine/create.py", line 574, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/engine/default.py", line 598, in connect
+    return self.dbapi.connect(*cargs, **cparams)
+  File "/home/leandro/.local/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "data-engineer-cluster.cyhh5bfevlmn.us-east-1.redshift.amazonaws.com" (52.44.43.227), port 5439 failed: FATAL:  unrecognized configuration parameter "standard_conforming_strings"
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/mnt/c/Users/leand/OneDrive/Desktop/Data_engineer_coder/Data_Engineer_Coderhouse/SegundaEntregaColombo/main.py", line 79, in load_data
+    with engine.connect() as connection:
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 3325, in connect
+    return self._connection_cls(self, close_with_result=close_with_result)
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 96, in __init__
+    else engine.raw_connection()
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 3404, in raw_connection
+    return self._wrap_pool_connect(self.pool.connect, _connection)
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 3374, in _wrap_pool_connect
+    Connection._handle_dbapi_exception_noconnection(
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 2208, in _handle_dbapi_exception_noconnection
+    util.raise_(
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 3371, in _wrap_pool_connect
+    return fn()
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 327, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 894, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 493, in checkout
+    rec = pool._do_get()
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/impl.py", line 145, in _do_get
+    with util.safe_reraise():
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/impl.py", line 143, in _do_get
+    return self._create_connection()
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 273, in _create_connection
+    return _ConnectionRecord(self)
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 388, in __init__
+    self.__connect()
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 690, in __connect
+    with util.safe_reraise():
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 686, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/engine/create.py", line 574, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/home/leandro/.local/lib/python3.10/site-packages/sqlalchemy/engine/default.py", line 598, in connect
+    return self.dbapi.connect(*cargs, **cparams)
+  File "/home/leandro/.local/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "data-engineer-cluster.cyhh5bfevlmn.us-east-1.redshift.amazonaws.com" (52.44.43.227), port 5439 failed: FATAL:  unrecognized configuration parameter "standard_conforming_strings"
+
+(Background on this error at: https://sqlalche.me/e/14/e3q8)

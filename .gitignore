@@ -1,8 +1,0 @@
-#Ignore Logs
-logs/
-
-#Ignore pycache
-__pycache__/
-
-#Ignore .env
-.env

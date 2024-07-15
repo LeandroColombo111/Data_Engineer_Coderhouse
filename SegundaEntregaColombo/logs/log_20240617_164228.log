@@ -1,0 +1,4 @@
+2024-06-17 16:42:28,481:INFO:Logging setup complete. Logs will be stored in logs/log_20240617_164228.log
+2024-06-17 16:42:28,481:INFO:Iniciando la extracción de datos
+2024-06-17 16:42:28,482:INFO:Iniciando la transformación de datos
+2024-06-17 16:42:28,559:INFO:Datos extraídos correctamente desde la API

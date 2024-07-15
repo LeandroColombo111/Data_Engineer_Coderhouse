@@ -1,0 +1,2 @@
+2024-06-17 16:49:58,284:INFO:Logging setup complete. Logs will be stored in logs/log_20240617_164958.log
+2024-06-17 16:49:58,288:ERROR:La variable de entorno REDSHIFT_HOST no está definida o está vacía.
