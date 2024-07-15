@@ -1,2 +1,0 @@
-2024-06-17 16:50:32,876:INFO:Logging setup complete. Logs will be stored in logs/log_20240617_165032.log
-2024-06-17 16:50:32,880:ERROR:La variable de entorno REDSHIFT_TABLE no está definida o está vacía.
