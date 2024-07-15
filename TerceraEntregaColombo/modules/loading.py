@@ -1,8 +1,19 @@
-import sqlite3
+import psycopg2
 import pandas as pd
+from dotenv import load_dotenv
+import os
+
+# Cargar las variables de entorno
+load_dotenv()
 
 def load_initial_data(posts, users_df):
-    conn = sqlite3.connect('external_users.db')
+    conn = psycopg2.connect(
+        host=os.getenv("REDSHIFT_ENDPOINT"),
+        port=os.getenv("REDSHIFT_PORT"),
+        dbname=os.getenv("REDSHIFT_DB"),
+        user=os.getenv("REDSHIFT_USER"),
+        password=os.getenv("REDSHIFT_PASSWORD")
+    )
     cursor = conn.cursor()
 
     # Crear tabla posts
@@ -18,8 +29,9 @@ def load_initial_data(posts, users_df):
     # Insertar datos de posts
     for post in posts:
         cursor.execute('''
-        INSERT OR REPLACE INTO posts (userId, id, title, body)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO posts (userId, id, title, body)
+        VALUES (%s, %s, %s, %s)
+        ON CONFLICT (id) DO NOTHING
         ''', (post['userId'], post['id'], post['title'], post['body']))
 
     # Crear tabla users
@@ -36,13 +48,25 @@ def load_initial_data(posts, users_df):
     ''')
 
     # Insertar datos de usuarios
-    users_df.to_sql('users', conn, if_exists='replace', index=False)
+    for index, row in users_df.iterrows():
+        cursor.execute('''
+        INSERT INTO users (id, name, surname, email, address, phone, company)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT (id) DO NOTHING
+        ''', (row['id'], row['name'], row['surname'], row['email'], row['address'], row['phone'], row['company']))
 
     conn.commit()
+    cursor.close()
     conn.close()
 
 def load_combined_data(combined_data):
-    conn = sqlite3.connect('external_users.db')
+    conn = psycopg2.connect(
+        host=os.getenv("REDSHIFT_ENDPOINT"),
+        port=os.getenv("REDSHIFT_PORT"),
+        dbname=os.getenv("REDSHIFT_DB"),
+        user=os.getenv("REDSHIFT_USER"),
+        password=os.getenv("REDSHIFT_PASSWORD")
+    )
     cursor = conn.cursor()
 
     # Crear tabla combined_data
@@ -60,9 +84,11 @@ def load_combined_data(combined_data):
     # Insertar datos combinados
     for row in combined_data:
         cursor.execute('''
-        INSERT OR REPLACE INTO combined_data (post_id, title, body, name, surname, email)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO combined_data (post_id, title, body, name, surname, email)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        ON CONFLICT (post_id) DO NOTHING
         ''', row)
 
     conn.commit()
+    cursor.close()
     conn.close()

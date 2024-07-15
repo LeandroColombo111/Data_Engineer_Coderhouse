@@ -17,15 +17,8 @@ def main():
     posts = extract_posts()
 
     # Simulación de datos de usuarios descargados de Kaggle
-    users_df = pd.DataFrame({
-        'name': ['John', 'Jane', 'Doe'],
-        'surname': ['Doe', 'Smith', 'Roe'],
-        'email': ['john.doe@example.com', 'jane.smith@example.com', 'doe.roe@example.com'],
-        'address': ['123 Main St', '456 Maple Ave', '789 Oak Dr'],
-        'phone': ['555-1234', '555-5678', '555-8765'],
-        'company': ['Company A', 'Company B', 'Company C'],
-        'id': [1, 2, 3]
-    })
+    data_frame = 'modules/data_frame.xlsx'
+    users_df = pd.read_excel(data_frame)
 
     # Cargar datos iniciales
     load_initial_data(posts, users_df)

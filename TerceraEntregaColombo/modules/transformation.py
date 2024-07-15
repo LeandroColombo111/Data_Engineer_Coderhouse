@@ -1,7 +1,18 @@
-import sqlite3
+import psycopg2
+from dotenv import load_dotenv
+import os
+
+# Cargar las variables de entorno
+load_dotenv()
 
 def transform_and_combine():
-    conn = sqlite3.connect('external_users.db')
+    conn = psycopg2.connect(
+        host=os.getenv("REDSHIFT_ENDPOINT"),
+        port=os.getenv("REDSHIFT_PORT"),
+        dbname=os.getenv("REDSHIFT_DB"),
+        user=os.getenv("REDSHIFT_USER"),
+        password=os.getenv("REDSHIFT_PASSWORD")
+    )
     cursor = conn.cursor()
 
     query = '''
